@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Website Buat Pacar</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#140a2a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --text:#f7f7ff;
+      --muted: rgba(247,247,255,.72);
+      --accent:#ff4d7d;
+      --accent2:#7c5cff;
+      --ok:#2ee59d;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,92,255,.35), transparent 55%),
+        radial-gradient(800px 480px at 80% 20%, rgba(255,77,125,.30), transparent 50%),
+        radial-gradient(700px 420px at 50% 90%, rgba(46,229,157,.16), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+    }
+
+    /* Animated overlay */
+    .bg-blob{
+      position:fixed;
+      inset:-30vh -30vw;
+      pointer-events:none;
+      z-index:-1;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,77,125,.18), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(124,92,255,.18), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(46,229,157,.12), transparent 42%);
+      filter: blur(18px);
+      animation: floaty 10s ease-in-out infinite;
+    }
+    @keyframes floaty{
+      0%,100%{ transform: translate3d(0,0,0) scale(1)}
+      50%{ transform: translate3d(2vw,-2vh,0) scale(1.04)}
+    }
+
+    /* Hearts */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      opacity:.9;
+    }
+    .heart{
+      position:absolute;
+      bottom:-10vh;
+      width:14px;
+      height:14px;
+      background: var(--accent);
+      transform: rotate(45deg);
+      border-radius: 3px;
+      animation: rise linear infinite;
+      filter: drop-shadow(0 10px 18px rgba(255,77,125,.25));
+    }
+    .heart::before,
+    .heart::after{
+      content:"";
+      position:absolute;
+      width:14px;
+      height:14px;
+      background:inherit;
+      border-radius: 50%;
+    }
+    .heart::before{ top:-7px; left:0 }
+    .heart::after{ left:-7px; top:0 }
+
+    @keyframes rise{
+      0%{ transform: translateY(0) rotate(45deg); opacity:0 }
+      10%{ opacity:1 }
+      100%{ transform: translateY(-120vh) rotate(45deg); opacity:0 }
+    }
+
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: clamp(16px, 3vw, 28px);
+    }
+
+    .shell{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 860px){
+      .shell{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(600px 200px at 10% 0%, rgba(255,77,125,.18), transparent 60%);
+      pointer-events:none;
+    }
+
+    .hero{
+      padding: clamp(22px, 3.2vw, 34px);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width:max-content;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(8px);
+    }
+
+    .dot{
+      width:9px; height:9px; border-radius:999px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(255,77,125,.18);
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(30px, 4.3vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .lead{
+      margin:0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.7vw, 17px);
+      line-height: 1.65;
+    }
+
+    .typing{
+      margin-top: 2px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:baseline;
+      font-weight: 600;
+      color: rgba(255,255,255,.92);
+    }
+
+    .typing .cursor{
+      display:inline-block;
+      width: 10px;
+      height: 1.1em;
+      margin-left: 2px;
+      background: rgba(255,255,255,.6);
+      border-radius: 4px;
+      animation: blink 1s steps(2,end) infinite;
+      transform: translateY(3px);
+    }
+    @keyframes blink{ 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: .01em;
+      border-radius: 14px;
+      padding: 12px 16px;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      user-select:none;
+    }
+
+    .btn-primary{
+      background: linear-gradient(180deg, rgba(255,77,125,.95), rgba(124,92,255,.90));
+      box-shadow: 0 12px 30px rgba(124,92,255,.22), 0 12px 30px rgba(255,77,125,.18);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 16px 40px rgba(124,92,255,.28), 0 16px 40px rgba(255,77,125,.22); }
+
+    .btn-ghost{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+    }
+    .btn-ghost:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+
+    .side{
+      padding: clamp(18px, 2.6vw, 26px);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .miniTitle{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+
+    .miniTitle h2{
+      margin:0;
+      font-size: 16px;
+      color: rgba(255,255,255,.90);
+      letter-spacing: .02em;
+    }
+
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(46,229,157,.12);
+      border: 1px solid rgba(46,229,157,.22);
+      color: rgba(220,255,242,.95);
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+
+    .quote{
+      padding: 14px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.86);
+      line-height: 1.6;
+      position:relative;
+    }
+
+    .quote strong{ color: rgba(255,255,255,.98) }
+
+    .reveal{
+      margin-top:auto;
+      padding: 14px 14px;
+      border-radius: 16px;
+      background: rgba(255,77,125,.10);
+      border: 1px solid rgba(255,77,125,.20);
+      display:none;
+      transform-origin: top;
+      animation: pop .25s ease-out;
+    }
+    @keyframes pop{ from{opacity:.0; transform: scale(.98)} to{opacity:1; transform: scale(1)} }
+
+    .reveal .msg{
+      margin:0;
+      color: rgba(255,255,255,.92);
+      line-height: 1.7;
+    }
+
+    .footer{
+      grid-column: 1 / -1;
+      text-align:center;
+      padding-top: 10px;
+      color: rgba(255,255,255,.55);
+      font-size: 12.5px;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 20px;
+      z-index: 50;
+    }
+    .modal[open]{ display:flex }
+
+    .modalCard{
+      width: min(640px, 100%);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .modalCard header{
+      padding: 16px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .modalCard header h3{ margin:0; font-size: 16px; }
+
+    .close{
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.9);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .modalCard .body{ padding: 16px; }
+    .modalCard .body p{ margin:0; color: rgba(255,255,255,.9); line-height: 1.7; }
+
+    .spark{
+      display:inline-block;
+      background: linear-gradient(90deg, #fff, rgba(255,77,125,.95), rgba(124,92,255,.95), #fff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blob" aria-hidden="true"></div>
+  <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+  <main class="wrap">
+    <section class="shell" aria-label="Website buat pacar">
+      <div class="card">
+        <div class="hero">
+          <div class="badge"><span class="dot"></span> <span id="badgeText">Buat Pacar Tersayang</span></div>
+
+          <h1>Sayang, ini tempat kecil buat kita 🤍</h1>
+          <p class="lead">
+            Klik tombolnya ya sayang. Biar Ridd bisa bilang satu hal: Ridd akan memilih sayang selamanya sampai kapanpun
+          </p>
+
+          <div class="typing" aria-live="polite">
+            <span>“</span><span id="typeText"></span><span class="cursor" aria-hidden="true"></span><span>”</span>
+          </div>
+
+          <!-- Foto & Video (tanpa upload) -->
+          <div style="margin-top:10px; display:grid; gap:10px;">
+            <div class="quote" style="padding:14px;">
+              <div style="font-weight:800; margin-bottom:6px;">Foto & Video kamu</div>
+              <div style="color:rgba(255,255,255,.75); font-size:13px; line-height:1.6;">
+                Foto/Video sudah dipasang otomatis dari folder kamu.
+              </div>
+            </div>
+
+            <!-- FOTO (ganti nama file sesuai foto kamu) -->
+            <div style="border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); position:relative;">
+              <img
+                src="video pacar/foto pacar (1).jpeg"
+                alt="Foto pacar"
+                style="width:100%; height:260px; object-fit:cover; display:block; background:rgba(0,0,0,.2);" />
+              <div style="position:absolute; inset:auto 10px 10px 10px; padding:8px 10px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12); border-radius:12px; backdrop-filter: blur(6px); color:rgba(255,255,255,.95); font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                Foto pacar
+              </div>
+            </div>
+
+            <!-- VIDEO -->
+            <div style="border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); position:relative;">
+              <video
+                src="video pacar/WhatsApp Video 2026-06-28 at 00.55.08.mp4"
+                autoplay
+                loop
+                muted
+                playsinline
+                controls
+                preload="metadata"
+                style="width:100%; height:260px; object-fit:cover; background:rgba(0,0,0,.2); display:block;">
+              </video>
+              <div style="position:absolute; inset:auto 10px 10px 10px; padding:8px 10px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12); border-radius:12px; backdrop-filter: blur(6px); color:rgba(255,255,255,.95); font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                WhatsApp Video 2026-06-28
+              </div>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top: 14px;">
+            <button class="btn-primary" id="btnReveal">Klik kalau sayang</button>
+            <button class="btn-ghost" id="btnOpen">Buka Pesan Spesial</button>
+          </div>
+        </div>
+      </div>
+
+
+      <aside class="card side">
+        <div class="miniTitle">
+          <h2>Kenapa aku sayang?</h2>
+          <span class="chip">100% versi romantis</span>
+        </div>
+
+        <div class="quote">
+          <div style="font-weight:800; margin-bottom:6px;">Nanaa ituu…</div>
+          <div>🌷 bikin hari jadi lebih ringan<br/>✨ bikin semangat balik<br/>💗 bikin ridd ingin jadi versi terbaik</div>
+        </div>
+
+        <div class="reveal" id="revealBox">
+          <p class="msg">
+            Nanaa klik… berarti Nanaa sayang juga samaa <strong>ridd</strong>. <br/>
+            Makasih udah ada. Makasih udah jadi tempat pulangnyaa ridd yaa sayang.
+          </p>
+        </div>
+
+        <div style="color:rgba(255,255,255,.6); font-size:12.5px; line-height:1.6;">
+          Tip: coba pencet tombolnya beberapa kali, tapi jangan lupa tetap jaga hati 😄
+        </div>
+      </aside>
+
+      <div class="footer">
+        Dibuat dengan hati. Untuk kamu yang spesial. <span class="spark">🤍</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <dialog class="modal" id="modal" aria-label="Pesan spesial" open="false">
+    <div class="modalCard" role="document">
+      <header>
+        <h3>Pesan Spesial</h3>
+        <button class="close" id="btnClose" aria-label="Tutup">×</button>
+      </header>
+      <div class="body">
+        <p>
+          <strong>Sayang…</strong><br/>
+          Aku nggak tahu bagaimana caranya kamu bisa sesayang itu, tapi aku tahu satu hal: aku bangga punya kamu.
+          <br/><br/>
+          <span class="spark">Terima kasih</span> udah bertahan, udah saling ngertii, dan tetap pilih aku di hari-hari yang kadang nggak mudah.
+          <br/><br/>
+          Intinya: aku sayangg amaa naa. Sekarang, besok, dan seterusnyaa. <br/>
+          lopp youuu sayanggkuu🤍
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Hearts
+    const heartsEl = document.getElementById('hearts');
+    const count = 18;
+    for(let i=0;i<count;i++){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const size = 10 + Math.random()*16; // 10-26
+      h.style.width = size + 'px';
+      h.style.height = size + 'px';
+      h.style.left = (Math.random()*100) + 'vw';
+      const duration = 6 + Math.random()*6; // 6-12s
+      const delay = Math.random()*-10; // start at different phase
+      h.style.animationDuration = duration + 's';
+      h.style.animationDelay = delay + 's';
+      h.style.opacity = 0.85;
+      h.style.background = i%3===0 ? 'rgba(124,92,255,0.95)' : 'rgba(255,77,125,0.95)';
+      heartsEl.appendChild(h);
+    }
+
+    // Typing
+    const phrases = [
+      'Aku sayang kamu',
+      'Kamu rumahku',
+      'Tetaplah di sini',
+      'Aku milih kamu'
+    ];
+
+    const typeEl = document.getElementById('typeText');
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    function tick(){
+      const current = phrases[phraseIndex];
+      const speed = deleting ? 25 : 45;
+
+      if(!deleting){
+        charIndex++;
+        typeEl.textContent = current.slice(0, charIndex);
+        if(charIndex >= current.length){
+          deleting = true;
+          setTimeout(tick, 900);
+          return;
+        }
+      } else {
+        charIndex--;
+        typeEl.textContent = current.slice(0, charIndex);
+        if(charIndex <= 0){
+          deleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+      }
+
+      setTimeout(tick, speed);
+    }
+    tick();
+
+    // Interactions
+    const btnReveal = document.getElementById('btnReveal');
+    const revealBox = document.getElementById('revealBox');
+    const btnOpen = document.getElementById('btnOpen');
+    const modal = document.getElementById('modal');
+    const btnClose = document.getElementById('btnClose');
+
+    btnReveal.addEventListener('click', () => {
+      revealBox.style.display = 'block';
+      btnReveal.textContent = 'Makasih sayang 🤍';
+      btnReveal.style.transform = 'translateY(-1px)';
+      // small bounce
+      setTimeout(()=> btnReveal.style.transform = '', 200);
+    });
+
+    function openModal(){
+      // Use dialog methods if supported
+      if(typeof modal.showModal === 'function'){
+        modal.showModal();
+      } else {
+        modal.setAttribute('open','true');
+      }
+    }
+    function closeModal(){
+      if(typeof modal.close === 'function'){
+        modal.close();
+      } else {
+        modal.removeAttribute('open');
+      }
+    }
+
+    btnOpen.addEventListener('click', openModal);
+    btnClose.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if(e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeModal();
+    });
+
+
+  </script>
+</body>
+</html>
+
+
